@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10040b">
+<title>Entre Nós 18+</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+:root{--bg:#10040b;--panel:#220813;--panel2:#2e0b1b;--text:#fff0f5;--muted:#d4a6b7;--pink:#ff286f;--pink2:#ff6a98;--gold:#f5ce72;--line:#ff9ab51f;--shadow:0 24px 70px #0007}
+*{box-sizing:border-box}
+
+/* Fundo da tela (Desktop) */
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background:#050103 url('data:image/svg+xml;utf8,<svg width="30" height="30" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="1" fill="%23ff286f15"/></svg>');
+  color:var(--text);
+  font-family:'DM Sans',system-ui,sans-serif;
+  overflow:hidden;
+}
+
+button,input{font:inherit}button{cursor:pointer}
+
+/* Estilo de Janela de Sistema Operacional */
+.os-wrapper {
+  width: min(1440px, 95vw);
+  height: min(900px, 95vh);
+  background: radial-gradient(ellipse at 50% 0,#4a0b25 0%,var(--bg) 58%);
+  border-radius: 16px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.9), 0 0 0 1px #ffffff10 inset;
+  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.os-titlebar {
+  background: rgba(0,0,0,0.3);
+  height: 38px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.os-dot { width: 12px; height: 12px; border-radius: 50%; }
+.os-dot.red { background: #ff5f56; }
+.os-dot.yellow { background: #ffbd2e; }
+.os-dot.green { background: #27c93f; }
+.os-title {
+  flex: 1; text-align: center; font-size: 12px; color: var(--muted); font-weight: 700; letter-spacing: 2px; margin-left: -44px; text-transform: uppercase;
+}
+
+/* Janela Modal Inicial */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  padding: 16px;
+}
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+.modal-window {
+  background: var(--panel); border: 1px solid var(--pink); border-radius: 20px;
+  width: 100%; max-width: 480px; box-shadow: 0 30px 80px rgba(255,40,111,0.2);
+  transform: translateY(20px) scale(0.95); transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  overflow: hidden;
+}
+.modal-overlay.active .modal-window { transform: translateY(0) scale(1); }
+.modal-content { padding: 40px 30px; text-align: center; }
+
+/* Contêiner do App */
+.app{flex: 1; overflow-y: auto; overflow-x: hidden; display:flex; flex-direction:column; gap:16px; padding: 20px;}
+
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:4px 4px}
+.brand{display:flex;align-items:center;gap:13px}
+.brand-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:16px;background:linear-gradient(135deg,#ff286f,#a70d4b);font-size:25px;box-shadow:0 8px 30px #ff286f3b}
+.brand strong{font-size:18px;letter-spacing:1px}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:3px;margin-top:3px}
+.head-actions{display:flex;gap:8px}.ghost{border:1px solid var(--line);border-radius:12px;padding:10px 13px;background:#ffffff08;color:var(--text);font-weight:700;font-size:12px}
+
+.screen{display:none;flex:1;animation:enter .32s ease both}.screen.active{display:flex}
+.os-wrapper:has(#home.active) header, .os-wrapper:has(#home.active) footer{display:none}
+
+.home h1{margin:0 0 30px;font-size:clamp(54px,10vw,112px)}.home .home-actions{margin-top:0}
+@keyframes enter{from{opacity:0;transform:translateY(12px) scale(.99)}to{opacity:1;transform:none}}
+.home{flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:clamp(25px,5vw,70px);border:1px solid var(--line);border-radius:32px;background:linear-gradient(140deg,#2b0919eF,#16060ff5);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.home:before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:#ff286f12;filter:blur(8px);top:-420px}
+.kicker{color:var(--gold);font-size:12px;font-weight:900;letter-spacing:4px;text-transform:uppercase;position:relative}
+h1{font-family:'Playfair Display',serif;font-size:clamp(48px,8vw,100px);line-height:1;margin:20px 0 12px;letter-spacing:-3px;position:relative}h1 em{color:var(--pink);font-weight:700}
+h2{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,48px);margin:0 0 14px}
+.lead{max-width:720px;color:var(--muted);font-size:clamp(14px,1.5vw,18px);line-height:1.7;margin:0 auto 28px}
+.big-icon{font-size:clamp(55px,8vw,95px);filter:drop-shadow(0 10px 20px #0008);position:relative}
+
+.btn{border:2px solid #ff6595;background:linear-gradient(135deg,#bd0b4c,var(--pink));color:white;border-radius:16px;padding:16px 23px;font-weight:900;font-size:clamp(14px,1.5vw,20px);box-shadow:0 10px 28px #ff286f2b;transition:transform .15s,filter .15s}
+.btn:hover,.btn:focus-visible{transform:translateY(-2px);filter:brightness(1.12);outline:3px solid #f5ce7270;outline-offset:3px}
+.btn.secondary{background:#ffffff08;border-color:#ffffff24;color:#f6d9e3;box-shadow:none}.btn.gold{background:linear-gradient(135deg,#d89c34,var(--gold));border-color:#ffe4a6;color:#38101e}
+.home-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+
+.game{display:flex;flex-direction:column;gap:15px}
+.progress-panel{border:1px solid var(--line);border-radius:18px;padding:14px 18px;background:#1c0711cc}
+.progress-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px;font-size:12px;font-weight:800}.progress-top span:last-child{color:var(--gold);font-variant-numeric:tabular-nums}
+.bar{height:8px;background:#ffffff12;border-radius:99px;overflow:hidden}.bar-fill{height:100%;width:0;background:linear-gradient(90deg,#c10b4e,var(--pink),var(--gold));transition:width .4s}
+
+.game-grid{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:15px;flex:1}
+.challenge{border:1px solid var(--line);border-radius:28px;padding:clamp(20px,3.2vw,42px);background:linear-gradient(145deg,#2a0919ed,#19060ff5);box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;min-height:420px}
+.level-pill{border:1px solid #ff659555;border-radius:999px;color:#ff9fbd;padding:8px 13px;font-size:11px;font-weight:900;letter-spacing:2px;background:#ff286f0d}
+.challenge-icon{font-size:clamp(52px,6vw,80px);margin:18px 0 10px;filter:drop-shadow(0 6px 15px #0008)}
+.challenge h2{font-size:clamp(29px,4vw,52px);line-height:1.12;margin-bottom:14px}
+.challenge-text{font-size:clamp(17px,2vw,27px);font-weight:700;line-height:1.5;max-width:850px;white-space:pre-line}
+.timer-wrap{display:flex;align-items:center;gap:12px;margin:20px 0 6px;padding:10px 15px;border-radius:15px;border:1px solid var(--line);background:#0003}
+.timer{font-size:clamp(25px,3vw,40px);font-weight:900;color:var(--gold);font-variant-numeric:tabular-nums;min-width:88px}
+.timer-label{color:var(--muted);font-size:10px;letter-spacing:2px;text-align:left}
+.challenge-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:20px}
+
+.side-card{border:1px solid var(--line);border-radius:22px;background:#1b0711e8;padding:19px;display:flex;flex-direction:column;gap:14px}
+.side-card h3{margin:0;font-size:17px}.side-card p{color:var(--muted);font-size:12px;line-height:1.6;margin:0}
+.stat{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);font-size:12px}.stat:last-of-type{border-bottom:0}.stat b{color:var(--gold)}
+.side-actions{display:grid;gap:8px;margin-top:auto}
+
+.roulette{flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px solid var(--line);border-radius:28px;padding:30px;background:linear-gradient(145deg,#2a0919ed,#19060ff5);box-shadow:var(--shadow)}
+.roulette-disc{width:clamp(150px,22vw,250px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;margin:20px auto;background:conic-gradient(#ff286f 0 60deg,#5b1236 60deg 120deg,#d89c34 120deg 180deg,#6b0d37 180deg 240deg,#ff6a98 240deg 300deg,#451027 300deg);border:9px solid #ffffff20;box-shadow:0 0 0 8px #ff286f16,0 18px 40px #0008;animation:float 2.8s ease-in-out infinite}
+.roulette-disc span{display:grid;place-items:center;width:45%;height:45%;border-radius:50%;background:#200813;color:#ffeaf1;font-size:38px;border:2px solid #ffb4ca}
+@keyframes float{50%{transform:translateY(-5px) rotate(4deg)}}
+.roulette-result{font-family:'Playfair Display',serif;font-size:clamp(24px,4vw,44px);color:var(--gold);min-height:90px;display:flex;flex-direction:column;justify-content:center;gap:8px;white-space:pre-line}
+.roulette-result small{font:700 12px 'DM Sans',sans-serif;color:var(--muted);letter-spacing:2px}
+
+.end{flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px solid var(--line);border-radius:30px;padding:40px;background:linear-gradient(145deg,#2a0919ed,#19060ff5)}
+.end h2{font-size:clamp(38px,6vw,72px);margin:14px 0}.end p{max-width:720px;color:var(--muted);font-size:17px;line-height:1.7}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;transition:.2s;pointer-events:none;background:#fff0f5;color:#4b0c27;border-radius:13px;padding:12px 18px;font-weight:900;z-index:50;box-shadow:0 8px 35px #0008}.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{display:flex;justify-content:space-between;gap:12px;color:#986b7d;font-size:11px;padding:0 4px}footer span:last-child{text-align:right}
+
+@media(max-width:850px){
+  .app{padding: 10px;}
+  .game-grid{grid-template-columns:1fr}.side-card{display:grid;grid-template-columns:1fr 1fr}.side-card h3,.side-card p,.side-actions{grid-column:1/-1}.challenge{min-height:430px}.head-actions .ghost{font-size:10px;padding:9px}
+}
+@media(max-width:520px){
+  .os-wrapper { width: 100vw; height: 100vh; border-radius: 0; border: none; }
+  .os-title { display: none; }
+  header{align-items:flex-start}.brand-icon{width:40px;height:40px}.brand strong{font-size:15px}.brand small{letter-spacing:1.5px;font-size:9px}.head-actions{flex-direction:column}.home{border-radius:22px;padding:26px 17px}.game-grid{gap:10px}.challenge{border-radius:22px;padding:22px 16px;min-height:440px}.challenge-actions .btn{flex:1;min-width:120px;padding:13px 12px;font-size:13px}.side-card{padding:15px}footer{flex-direction:column}footer span:last-child{text-align:left}
+}
+@media(min-width:1200px) and (min-height:850px){.challenge{min-height:530px}}
+</style>
+</head>
+<body>
+
+<!-- Janela Inicial Modal -->
+<div id="entryModal" class="modal-overlay active">
+  <div class="modal-window">
+    <div class="os-titlebar">
+      <div class="os-dot red"></div><div class="os-dot yellow"></div><div class="os-dot green"></div>
+    </div>
+    <div class="modal-content">
+      <div class="icon-big" style="font-size: 60px; margin-bottom: 10px;">🔞</div>
+      <h2 style="font-size: 28px; margin-bottom: 15px; color: var(--gold);">Aviso de Privacidade</h2>
+      <p style="color: var(--muted); font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+        Este jogo é um ambiente privado e contém desafios explícitos projetados para casais. Fechem a porta, relaxem e confirmem que são maiores de 18 anos para acessar a sala.
+      </p>
+      <button class="btn" id="acceptBtn" style="width: 100%;">ENTRAR NA SALA</button>
+    </div>
+  </div>
+</div>
+
+<!-- Janela Principal Estilo SO -->
+<div class="os-wrapper">
+  <div class="os-titlebar">
+    <div class="os-dot red"></div><div class="os-dot yellow"></div><div class="os-dot green"></div>
+    <div class="os-title">Entre Nós 18+ — Sessão Privada</div>
+  </div>
+  
+  <div class="app">
+    <header>
+      <div class="brand"><div class="brand-icon">♡</div><div><strong>ENTRE NÓS</strong><small>ARCADE A DOIS</small></div></div>
+      <div class="head-actions"><button class="ghost" id="soundBtn">♫ Som: desligado</button><button class="ghost" id="fullBtn">⛶ Tela cheia</button></div>
+    </header>
+    
+    <section class="screen home active" id="home">
+      <h1>Entre Nós <em>18+</em></h1>
+      <div class="home-actions"><button class="btn" id="startBtn">▶ COMEÇAR (35 RODADAS)</button></div>
+    </section>
+    
+    <section class="screen game" id="game">
+      <div class="progress-panel"><div class="progress-top"><span id="levelLabel">NÍVEL 2 • PROVOCANTE</span><span id="progressText">1 / 35</span></div><div class="bar"><div class="bar-fill" id="progressFill"></div></div></div>
+      <div class="game-grid">
+        <div class="challenge">
+          <span class="level-pill" id="levelPill">NÍVEL 2 • PROVOCANTE</span><div class="challenge-icon" id="challengeIcon">💋</div>
+          <h2 id="challengeTitle">Vez do Rafael</h2><p class="challenge-text" id="challengeText"></p>
+          <div class="timer-wrap" id="timerWrap"><div><div class="timer" id="timer">01:00</div><div class="timer-label">TEMPO ALEATÓRIO</div></div><button class="btn secondary" id="timerBtn" style="font-size:12px;padding:11px 14px">▶ Iniciar tempo</button></div>
+          <div class="challenge-actions"><button class="btn secondary" id="skipBtn">Pular ↷</button><button class="btn" id="nextBtn">Concluído • Próximo →</button></div>
+        </div>
+        <aside class="side-card">
+          <h3>Estatísticas</h3><p>Controle do progresso atual.</p>
+          <div class="stat"><span>Rodada</span><b id="statRound">01 / 35</b></div><div class="stat"><span>Desafios concluídos</span><b id="statDone">0</b></div><div class="stat"><span>Já pulados</span><b id="statSkip">0</b></div>
+          <div class="side-actions"><button class="btn secondary" id="pauseBtn">Ⅱ Pausar jogo</button></div>
+        </aside>
+      </div>
+    </section>
+    
+    <section class="screen roulette" id="roulette">
+      <div class="kicker">MOMENTO SURPRESA • ROLETA</div><h2>O clima esquentou...</h2><div class="roulette-disc" id="rouletteDisc"><span>♡</span></div>
+      <div class="roulette-result" id="rouletteResult">Sorteando a temperatura...</div>
+      <p class="lead" style="margin-bottom:10px">O sorteio sugere uma combinação intensa. Conversem e escolham se querem fazer ou adaptar.</p>
+      <div class="home-actions"><button class="btn" id="spinBtn">Girar a roleta 🎲</button><button class="btn gold" id="rouletteContinue" style="display:none">Ir para o próximo desafio →</button><button class="btn secondary" id="rouletteBack">Pular sorteio</button></div>
+    </section>
+    
+    <section class="screen end" id="end">
+      <div class="big-icon">🌋</div><div class="kicker">FIM DO JOGO</div><h2>Hora do Vamo Ver.</h2>
+      <p style="color: var(--gold); font-size: 20px; font-weight: 700; margin-bottom: 10px;">A Roleta escolheu esta posição para finalizar:</p>
+      <h2 id="final-position" style="color: #fff; font-size: 32px; text-transform: uppercase;"></h2>
+      <p>O jogo preparou vocês. O ritmo agora é livre. Joguem a tela de lado e aproveitem.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:25px"><button class="btn" id="replayBtn">↻ Jogar novamente</button><button class="btn secondary" id="homeBtn">Voltar ao início</button></div>
+    </section>
+    
+    <footer><span>Seta direita: próximo • Seta esquerda: pular • Esc: pausar</span><span>35 rodadas sorteadas • Níveis 2 e 3</span></footer>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+// BANCO DE DADOS COMPLETO COM 96 DESAFIOS (Sensual, Provocante, Final)
+const DATABASE = [
+  {
+    "key": "sensual",
+    "label": "SENSUAL",
+    "className": "sensual",
+    "challenges": [
+      { "id": "s1", "icon": "💋", "title": "Beijo sem pressa", "text": "Rafael e Ana se beijam por 60 segundos, sem conversar e sem olhar o celular." },
+      { "id": "s2", "icon": "🤍", "title": "Beijo no rosto", "text": "Rafael escolhe três lugares do rosto de Ana para beijar lentamente. Depois Ana faz o mesmo." },
+      { "id": "s3", "icon": "👀", "title": "Olhar de perto", "text": "Fiquem muito próximos, olhando nos olhos por 40 segundos. Quem rir primeiro escolhe o próximo beijo." },
+      { "id": "s4", "icon": "🎵", "title": "Dança lenta", "text": "Escolham uma música e dancem bem próximos por 1 minuto." },
+      { "id": "s5", "icon": "💆", "title": "Massagem lenta", "text": "Rafael faz uma massagem em ombros, costas e pernas de Ana por 2 minutos. Depois troquem." },
+      { "id": "s6", "icon": "🫂", "title": "Abraço longo", "text": "Fiquem abraçados por 90 segundos. Nada de conversar: só presença." },
+      { "id": "s7", "icon": "🗣️", "title": "Sussurro", "text": "Cada um sussurra no ouvido do outro uma coisa que acha muito atraente nele." },
+      { "id": "s8", "icon": "💞", "title": "Escolha do beijo", "text": "Ana escolhe um lugar não íntimo para Rafael beijar lentamente. Depois Rafael escolhe um para Ana." },
+      { "id": "s9", "icon": "🙈", "title": "Olhos fechados", "text": "Um fecha os olhos enquanto o outro escolhe entre beijo, abraço ou carinho em uma região confortável. Depois troquem." },
+      { "id": "s10", "icon": "❤️", "title": "Três detalhes", "text": "Cada um fala três detalhes físicos do outro que acha especialmente atraentes." },
+      { "id": "s11", "icon": "💋", "title": "Beijo no pescoço", "text": "Um dá alguns beijos lentos no pescoço do outro. Depois troquem." },
+      { "id": "s12", "icon": "🤫", "title": "Fala baixo", "text": "Cada um diz baixinho uma coisa que gostaria que o outro fizesse para aumentar o clima, sem obrigação de aceitar." },
+      { "id": "s13", "icon": "✨", "title": "Toque Suave", "text": "Um faz carinho suave com a ponta dos dedos nos braços ou mãos do outro por 30 segundos." },
+      { "id": "s14", "icon": "💋", "title": "Beijo Lento na Bochecha", "text": "Dê um beijo demorado e suave na bochecha do outro enquanto o abraça firmemente." },
+      { "id": "s15", "icon": "🤫", "title": "Sussurro no Ouvido", "text": "Aproxime-se e sussurre no ouvido do outro um desejo ou fantasia simples que gostaria de realizar." },
+      { "id": "s16", "icon": "👀", "title": "Olhar Fixo", "text": "Fiquem em silêncio olhando fixamente nos olhos um do outro por 30 segundos sem desviar." },
+      { "id": "s17", "icon": "💆", "title": "Carinho no Cabelo", "text": "Faça um carinho relaxante nos cabelos do outro durante 45 segundos." }
+    ]
+  },
+  {
+    "key": "provocante",
+    "label": "NÍVEL 2 • PROVOCANTE",
+    "className": "provocante",
+    "challenges": [
+      { "id": "p1", "icon": "🔥", "title": "Beijo intenso", "text": "Beijem-se por 90 segundos, alternando momentos lentos e mais intensos." },
+      { "id": "p2", "icon": "🙈", "title": "Venda opcional", "text": "Se os dois quiserem, um cobre os olhos enquanto o outro escolhe um beijo ou carinho em uma região não íntima. Depois troquem." },
+      { "id": "p3", "icon": "🧥", "title": "Uma camada a menos", "text": "Se os dois estiverem confortáveis, cada um pode tirar uma peça externa de roupa e continuar." },
+      { "id": "p4", "icon": "🫶", "title": "Escolha o carinho", "text": "Cada um indica uma região confortável onde gostaria de receber carinho por 45 segundos." },
+      { "id": "p5", "icon": "💬", "title": "O que aumenta a química", "text": "Cada um responde: “O que eu faço que mais aumenta a química entre nós?”" },
+      { "id": "p6", "icon": "💃", "title": "Dança colada", "text": "Dancem bem próximos por 90 segundos, devagar, sem conversar." },
+      { "id": "p7", "icon": "💋", "title": "Rosto e nuca", "text": "Um beija lentamente testa, rosto e nuca do outro. Depois troquem." },
+      { "id": "p8", "icon": "🧡", "title": "Sem usar as mãos", "text": "Beijem-se por 30 segundos sem usar as mãos." },
+      { "id": "p9", "icon": "😏", "title": "Quem desvia perde", "text": "Fiquem muito próximos olhando nos olhos por 45 segundos. Quem desviar primeiro escolhe o próximo desafio." },
+      { "id": "p10", "icon": "🎶", "title": "Música de clima", "text": "Escolham uma música que combine com o momento e fiquem abraçados até o refrão acabar." },
+      { "id": "p11", "icon": "🤫", "title": "Pedido baixo", "text": "Cada um fala baixinho um gesto de carinho que gostaria de receber agora. O outro pode aceitar, adaptar ou trocar." },
+      { "id": "p12", "icon": "💆", "title": "Massagem longa", "text": "Façam 3 minutos de massagem em costas, ombros ou pernas. Depois troquem." },
+      { "id": "p13", "icon": "💋", "title": "Beijo por turnos", "text": "Rafael escolhe o ritmo do beijo por 30 segundos; depois Ana escolhe por mais 30." },
+      { "id": "p14", "icon": "🔥", "title": "Aproximação", "text": "Um fica parado e o outro se aproxima lentamente até ficar bem perto. Depois troquem de papel." },
+      { "id": "p15", "icon": "🕯️", "title": "Luz baixa", "text": "Apaguem a luz principal, deixem uma luz baixa e fiquem abraçados em silêncio por 1 minuto." },
+      { "id": "p16", "icon": "🪑", "title": "Colo", "text": "Se os dois estiverem confortáveis, um senta no colo do outro por 30 segundos enquanto ficam abraçados. Depois troquem." },
+      { "id": "p17", "icon": "💞", "title": "Beijo guiado", "text": "Um conduz o ritmo do beijo por 45 segundos. Depois troquem." },
+      { "id": "p18", "icon": "👂", "title": "No ouvido", "text": "Cada um diz no ouvido do outro o que mais gosta quando vocês estão bem próximos." },
+      { "id": "p19", "icon": "👉", "title": "Toque Provocante", "text": "Passe as mãos por regiões sensíveis do corpo do outro por cima da roupa durante 45 segundos." },
+      { "id": "p20", "icon": "🔥", "title": "Beijo com Mão Boba", "text": "Um beijo mais ardente por 60 segundos com total liberdade para explorar o corpo por cima das roupas." },
+      { "id": "p21", "icon": "👄", "title": "Mordidinha Leve", "text": "Dê mordidinhas suaves e provocantes nos lábios, orelha ou pescoço do outro." },
+      { "id": "p22", "icon": "👕", "title": "Mão por Baixo da Blusa", "text": "Deslize as mãos por baixo da peça de roupa superior do outro e faça carinho na pele por 45 segundos." },
+      { "id": "p23", "icon": "🔥", "title": "Provocação no Ouvido", "text": "Sussurre em detalhes no ouvido do outro o que você tem vontade de fazer quando a partida terminar." },
+      { "id": "p24", "icon": "👄", "title": "Beijo com Mordidinha no Lábio", "text": "Beijo provocante finalizando com uma leve mordida no lábio inferior durante 45 segundos." },
+      { "id": "p25", "icon": "🔥", "title": "Ficar de Lingerie/Cueca", "text": "Se ambos concordarem, um dos dois tira uma peça de roupa ficando apenas com roupas íntimas." },
+      { "id": "p26", "icon": "✨", "title": "Carinho Provocante na Coxa", "text": "Deslize as mãos pela parte interna das coxas do outro por 60 segundos." },
+      { "id": "p27", "icon": "💋", "title": "Beijo Cego Conduzido", "text": "Um fecha os olhos e é guiado pelo outro em um beijo provocante por 60 segundos." },
+      { "id": "p28", "icon": "👂", "title": "Sussurro Proibido", "text": "Sussurre no ouvido do outro um segredo safado que você nunca contou antes." },
+      { "id": "p29", "icon": "🔥", "title": "Mão Boba no Bumbum", "text": "Um beijo bem próximo com permissão total para acariciar e apertar o bumbum por 45 segundos." },
+      { "id": "p30", "icon": "🔥", "title": "Posição Provocante", "text": "Deite por cima do outro sem tocar totalmente o corpo, mantendo só o beijo e o calor por 45 segundos." },
+      { "id": "p31", "icon": "🔥", "title": "Provocação com Restrição", "text": "Fique 30 segundos com o rosto colado ao do outro, respirando bem perto, proibido beijar na boca." },
+      { "id": "p32", "icon": "🔥", "title": "Mão Boba na Virilha", "text": "Deslizar as mãos por dentro da roupa tocando a virilha e a raiz das coxas por 60 segundos." },
+      { "id": "p33", "icon": "💋", "title": "Beijo com Mão no Bumbum", "text": "Beijo quente enquanto aperta e puxa o bumbum do outro para colar os quadris por 60 segundos." },
+      { "id": "p34", "icon": "🔥", "title": "Mão Boba nos Seios", "text": "Deslizar as mãos por baixo do sutiã/blusa, acariciando e apertando os seios por 60 segundos." },
+      { "id": "p35", "icon": "🔥", "title": "Roçar de Quadris", "text": "Roçar as partes íntimas por cima da roupa sentindo o volume e o calor por 45 segundos." },
+      { "id": "p36", "icon": "🔥", "title": "Toque na Calcinha/Cueca", "text": "Passar os dedos por cima da calcinha ou cueca, massageando a região íntima por 45 segundos." },
+      { "id": "p37", "icon": "💋", "title": "Mordida na Coxa e Virilha", "text": "Dar beijos e mordidinhas provocantes na parte interna das coxas chegando até a virilha." },
+      { "id": "p38", "icon": "🔥", "title": "Mão Boba Conduzida", "text": "Guiar a mão do outro para exatamente onde você quer ser apertado(a) no corpo por 60 segundos." },
+      { "id": "p39", "icon": "🔥", "title": "Sugada no Pescoço e Orelha", "text": "Lamber, chupar e dar leves mordidas no pescoço e orelha até arrepiarem por 45 segundos." }
+    ]
+  },
+  {
+    "key": "final",
+    "label": "NÍVEL 3 • FINAL 18+",
+    "className": "final",
+    "challenges": [
+      { "id": "f1", "icon": "🔥", "title": "Abraço e beijo", "text": "Fiquem abraçados bem próximos e se beijem lentamente por 60 segundos." },
+      { "id": "f2", "icon": "🔥", "title": "Desejo em palavras", "text": "Cada um diz uma coisa que gostaria de viver com o outro hoje. O outro pode aceitar, adaptar ou apenas ouvir." },
+      { "id": "f3", "icon": "🔥", "title": "Escolha do outro", "text": "Cada um escolhe um gesto de intimidade ou carinho que gostaria agora. Vale aceitar, adaptar ou trocar." },
+      { "id": "f4", "icon": "🕯️", "title": "Preparem o clima", "text": "Apaguem a luz principal, deixem apenas uma luz baixa e escolham uma música para continuar." },
+      { "id": "f5", "icon": "👀", "title": "Sem pressa", "text": "Fiquem frente a frente por 1 minuto, alternando beijo, abraço e carinho do jeito que for confortável." },
+      { "id": "f6", "icon": "💬", "title": "Pergunta íntima", "text": "O que faz você se sentir mais desejado(a) por mim?" },
+      { "id": "f7", "icon": "🔥", "title": "Escolham juntos", "text": "Escolham entre beijo demorado, massagem, dança lenta ou abraço longo. Façam por 2 minutos." },
+      { "id": "f8", "icon": "💋", "title": "Beijo guiado", "text": "Um escolhe o ritmo do beijo por 45 segundos. Depois troquem." },
+      { "id": "f9", "icon": "🙈", "title": "Confiança", "text": "Um fecha os olhos e deixa o outro escolher entre beijo, abraço ou carinho em uma região confortável. Depois troquem." },
+      { "id": "f10", "icon": "🔥", "title": "O que você quer agora?", "text": "Cada um responde honestamente o que gostaria de receber do outro agora, sempre podendo ouvir um “não” ou “vamos adaptar”." },
+      { "id": "f11", "icon": "🔥", "title": "Pausa no jogo", "text": "Fiquem 2 minutos juntos sem tela, sem pontuação e sem instruções. Depois decidam se querem continuar o jogo." },
+      { "id": "f12", "icon": "🔥", "title": "Carinho escolhido", "text": "Cada um escolhe um gesto de carinho mais íntimo, mas confortável e consensual. O outro pode aceitar, adaptar ou trocar." },
+      { "id": "f13", "icon": "🎵", "title": "Música final", "text": "Escolham uma música que combine com o momento e fiquem juntos até ela terminar." },
+      { "id": "f14", "icon": "💋", "title": "Último beijo do jogo", "text": "Beijem-se por 1 minuto e depois decidam juntos se querem encerrar a dinâmica." },
+      { "id": "f15", "icon": "🔥", "title": "Fim das regras", "text": "Se os dois quiserem, parem o jogo aqui e continuem a intimidade sem desafios, pontuação ou instruções." },
+      { "id": "f16", "icon": "🫂", "title": "Bem perto", "text": "Fiquem abraçados bem próximos por 90 segundos e cada um escolhe um momento para beijar o outro." },
+      { "id": "f17", "icon": "🤫", "title": "Confissão curta", "text": "Cada um completa: “Eu fico com mais vontade de ficar perto de você quando...”" },
+      { "id": "f18", "icon": "💋", "title": "Três beijos", "text": "Cada um escolhe três tipos de beijo que gostaria de receber: rápido, lento ou demorado. Façam um de cada." },
+      { "id": "f19", "icon": "🔥", "title": "Oral no Ritmo", "text": "Ela chupa o pau dele ou ele chupa a pepeca dela continuamente durante 40 segundos." },
+      { "id": "f20", "icon": "✨", "title": "Toque Íntimo Guiado", "text": "Faça carinho íntimo direto na pele do outro, deixando ele(a) guiar a intensidade e o ritmo durante 60 segundos." },
+      { "id": "f21", "icon": "🔥", "title": "Provocação Total", "text": "Fique em uma posição provocante em frente ao outro, permitindo que ele(a) apenas observe por 30 segundos sem tocar." },
+      { "id": "f22", "icon": "🔥", "title": "Tirar mais uma Peça", "text": "Se os dois concordarem, cada um retira mais uma peça de roupa íntima para continuar o clima." },
+      { "id": "f23", "icon": "🔥", "title": "Massagem Sensual Intensa", "text": "Faça uma massagem caprichada e provocante tocando regiões bem próximas às partes íntimas por 90 segundos." },
+      { "id": "f24", "icon": "⚡", "title": "Sintonização Oral/Manual", "text": "Estimulação oral ou manual contínua por 60 segundos focando no prazer absoluto do outro." },
+      { "id": "f25", "icon": "🔥", "title": "Provocação com a Língua", "text": "Use a língua para explorar o pescoço, orelhas ou tronco do outro suavemente durante 60 segundos." },
+      { "id": "f26", "icon": "🔥", "title": "Masturbação Guiada / Toque Íntimo", "text": "Faça carinho direto na região íntima do outro enquanto ele(a) te indica o ritmo exato." },
+      { "id": "f27", "icon": "🔥", "title": "Ficar Totalmente Nu(a)", "text": "Se ambos concordarem, retirem o restante das roupas para curtir o contato pele com pele." },
+      { "id": "f28", "icon": "💋", "title": "Oral Focado e Sem Pressa", "text": "60 segundos ininterruptos de sexo oral focado totalmente no prazer do parceiro(a)." },
+      { "id": "f29", "icon": "🔥", "title": "Posição de Domínio", "text": "Um fica por cima no controle absoluto dos toques e beijos mais ardentes por 90 segundos." },
+      { "id": "f30", "icon": "🔥", "title": "Postura Provocante sem Toque", "text": "Fique em uma posição extremamente sensual na frente do outro, permitindo que ele(a) apenas observe por 40 segundos." },
+      { "id": "f31", "icon": "💋", "title": "Beijo Íntimo no Corpo", "text": "Dê uma sequência de beijos descendo do umbigo em direção às partes íntimas por 45 segundos." },
+      { "id": "f32", "icon": "⚡", "title": "Duplo Prazer", "text": "Carinho manual ou oral simultâneo por 60 segundos focando no prazer dos dois." },
+      { "id": "f33", "icon": "💋", "title": "Beijo na Pepeca Focado", "text": "Abrir as pernas dela e dar beijos, lambidas e chupadas diretas no clitóris por 60 segundos." },
+      { "id": "f34", "icon": "🔥", "title": "Mão na Pepeca Molhada", "text": "Dedos por dentro da calcinha acariciando e massageando o clitóris molhado por 60 segundos." },
+      { "id": "f35", "icon": "⚡", "title": "Dedilhada Direta", "text": "Inserir dedos na pepeca enquanto o polegar massageia o clitóris suavemente por 60 segundos." },
+      { "id": "f36", "icon": "💋", "title": "Oral Quente com Mão Boba", "text": "Sexo oral na pepeca enquanto usa as mãos para apertar as coxas ou o bumbum dela por 90 segundos." },
+      { "id": "f37", "icon": "⚡", "title": "Chupada com Masturbação", "text": "Ela chupa o pau dele enquanto ele usa as mãos na pepeca dela intensamente por 60 segundos." },
+      { "id": "f38", "icon": "🔥", "title": "Penetração Inicial", "text": "Encaixar a cabeça do pau na entrada da pepeca e dar estocadas lentas sem finalizar por 60 segundos." },
+      { "id": "f39", "icon": "💋", "title": "Lamber o Clitóris sem Mãos", "text": "Língua focado exclusivamente no clitóris com movimentos circulares por 60 segundos." },
+      { "id": "f40", "icon": "💋", "title": "Mão na Pepeca e Beijo de Língua", "text": "Beijar na boca com paixão enquanto a mão trabalha firme na pepeca dela por 60 segundos." }
+    ]
+  }
+];
+
+const LEVELS = Object.fromEntries(DATABASE.map(level => [level.key, level]));
+const $ = id => document.getElementById(id);
+
+let sequence=[], round=0, done=0, skipped=0, timerInterval=null, timeLeft=0, timerRunning=false, soundOn=false, audioCtx=null, spinning=false;
+let rouletteSpins = 0; // Controla quantas roletas já saíram para escalar a picância
+const MAX_ROUNDS = 35; 
+
+const finalPositions = [
+  "De 4 (Cachorrinho) com Sugador",
+  "Papai e Mamãe",
+  "Montada Invertida",
+  "Cavalgada de Frente",
+  "Frango Assado",
+  "Tesoura Frontal",
+  "Na Beirada da Cama"
+];
+
+// Níveis de picância para a roleta (escala de 0 a 2)
+const rouletteTiers = [
+  {
+    actions: ["Beijo demorado em", "Massagem provocante em", "Sussurro excitante sobre", "Mordidas de leve em"],
+    regions: ["mãos ou braços", "rosto ou nuca", "ombros ou costas", "pernas ou coxas"]
+  },
+  {
+    actions: ["Lamber devagar", "Mão boba apertando", "Beijar provocando", "Dar chupões em"],
+    regions: ["a parte interna das coxas", "a virilha", "os peitos / mamilos", "o bumbum"]
+  },
+  {
+    actions: ["Chupar gostoso", "Fazer carinho íntimo em", "Roçar com vontade em", "Masturbar / dedilhar"],
+    regions: ["a intimidade", "o clitóris", "o pau", "os pontos mais sensíveis"]
+  }
+];
+
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+function toast(msg){$("toast").textContent=msg;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2100);}
+function tone(freq=500,dur=.08){if(!soundOn)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=freq;g.gain.value=.035;o.connect(g);g.connect(audioCtx.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);o.stop(audioCtx.currentTime+dur);}catch(e){}}
+
+function parsePlayer(text) {
+  const hasRafael = text.includes("Rafael");
+  const hasAna = text.includes("Ana");
+  if (hasRafael && !hasAna) return "Vez do Rafael";
+  if (hasAna && !hasRafael) return "Vez da Ana";
+  return "Desafio Duplo";
+}
+
+$("acceptBtn").onclick = () => {
+  $("entryModal").classList.remove("active");
+  tone(600, 0.1);
+};
+
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");const b=$(id).querySelector("button:not([style*='display: none'])");if(b)b.focus();}
+function stopTimer(){clearInterval(timerInterval);timerInterval=null;timerRunning=false;}
+function formatTime(n){return String(Math.floor(n/60)).padStart(2,"0")+":"+String(n%60).padStart(2,"0");}
+
+function startGame(){
+ stopTimer();
+ rouletteSpins = 0; // Reinicia a progressão da roleta
+ 
+ // Sorteia 10 do nível provocante e 25 do nível final sem repetições
+ const poolProvocante = shuffle([...LEVELS.provocante.challenges]).slice(0, 10).map(c => ({...c, levelKey: 'provocante'}));
+ const poolFinal = shuffle([...LEVELS.final.challenges]).slice(0, 25).map(c => ({...c, levelKey: 'final'}));
+ 
+ sequence = [...poolProvocante, ...poolFinal];
+ round=0; done=0; skipped=0; 
+ showChallenge();
+}
+
+function showChallenge(){
+ stopTimer();
+ if(round >= MAX_ROUNDS){
+   const pos = finalPositions[Math.floor(Math.random() * finalPositions.length)];
+   $("final-position").textContent = `"${pos}"`;
+   showScreen("end");
+   return;
+ }
+ 
+ const c = sequence[round];
+ const info = LEVELS[c.levelKey];
+ 
+ $("levelLabel").textContent = info.label;
+ $("levelPill").textContent = info.label;
+ $("progressText").textContent = (round+1) + " / " + MAX_ROUNDS;
+ $("progressFill").style.width = ((round+1)/MAX_ROUNDS*100) + "%";
+ 
+ $("challengeIcon").textContent = c.icon || "🔥";
+ $("challengeTitle").textContent = parsePlayer(c.text);
+ $("challengeText").textContent = c.text;
+ 
+ $("statRound").textContent = String(round+1).padStart(2,"0") + " / " + MAX_ROUNDS;
+ $("statDone").textContent = done;
+ $("statSkip").textContent = skipped;
+ 
+ // Sorteio de tempo de 30s a 120s
+ timeLeft = [30, 45, 60, 90, 120][Math.floor(Math.random() * 5)];
+ 
+ $("timerWrap").style.display = "flex";
+ $("timer").textContent = formatTime(timeLeft);
+ $("timerBtn").textContent = "▶ Iniciar tempo";
+ $("timerBtn").disabled = false;
+ 
+ showScreen("game");
+ tone(520,.07);
+}
+
+function next(skippedTurn=false){
+  if(round >= MAX_ROUNDS) return;
+  stopTimer();
+  if(skippedTurn) skipped++; else done++;
+  round++;
+  
+  // A cada 3 rodadas normais completadas, injeta a Roleta se ainda não for o fim do jogo
+  if(round < MAX_ROUNDS && round % 3 === 0){
+    openRoulette();
+  } else {
+    showChallenge();
+  }
+}
+
+function startTimer(){
+ if(timerRunning){stopTimer();$("timerBtn").textContent="▶ Continuar tempo";return;}
+ if(timeLeft<=0)return;
+ timerRunning=true;
+ $("timerBtn").textContent="Ⅱ Pausar tempo";
+ timerInterval = setInterval(()=>{
+   timeLeft--; 
+   $("timer").textContent=formatTime(timeLeft);
+   if(timeLeft<=0){
+     stopTimer();
+     $("timer").textContent="00:00";
+     $("timerBtn").textContent="✓ Tempo esgotado";
+     $("timerBtn").disabled=true;
+     tone(760,.2);
+   }
+ },1000);
+}
+
+function openRoulette(){
+  stopTimer();
+  showScreen("roulette");
+  $("rouletteResult").textContent="Gire para descobrir";
+  $("spinBtn").style.display="inline-block";
+  $("rouletteContinue").style.display="none";
+  spinning=false;
+}
+
+function spinRoulette(){
+ if(spinning)return;
+ spinning=true;
+ $("spinBtn").disabled=true;
+ $("rouletteResult").textContent="Sorteando a temperatura...";
+ 
+ const d=$("rouletteDisc");
+ d.animate([{transform:"rotate(0deg) scale(1)"},{transform:"rotate(1080deg) scale(1.05)"},{transform:"rotate(1440deg) scale(1)"}],{duration:1900,easing:"cubic-bezier(.12,.75,.12,1)"});
+ 
+ // A cada 4 roletas (12 rodadas do jogo), o nível da roleta sobe (0 -> 1 -> 2)
+ let tierIndex = Math.min(Math.floor(rouletteSpins / 4), 2);
+ const tier = rouletteTiers[tierIndex];
+ 
+ let ticks=0;
+ const interval=setInterval(()=>{
+   const a = tier.actions[Math.floor(Math.random()*tier.actions.length)];
+   const r = tier.regions[Math.floor(Math.random()*tier.regions.length)];
+   $("rouletteResult").textContent=a+"\n"+r;
+   tone(300+ticks*15,.04);
+   ticks++;
+   
+   if(ticks>=18){
+     clearInterval(interval);
+     $("rouletteResult").textContent=a+"\n"+r+"\n\n"+ "Só se os dois quiserem ♡";
+     $("spinBtn").style.display="none";
+     $("rouletteContinue").style.display="inline-block";
+     $("spinBtn").disabled=false;
+     spinning=false;
+     rouletteSpins++; // Incrementa para a próxima ficar mais picante no futuro
+   }
+ }, 90);
+}
+
+$("startBtn").onclick=startGame;
+$("nextBtn").onclick=()=>next(false);
+$("skipBtn").onclick=()=>next(true);
+$("timerBtn").onclick=startTimer;
+$("spinBtn").onclick=spinRoulette;
+$("rouletteContinue").onclick=()=>showChallenge(); // Avança para a rodada pausada
+$("rouletteBack").onclick=()=>showChallenge(); // Pula o sorteio
+$("pauseBtn").onclick=()=>{stopTimer();showScreen("home");toast("Jogo pausado. Voltem quando quiserem.");};
+$("replayBtn").onclick=startGame;
+$("homeBtn").onclick=()=>{stopTimer();showScreen("home");};
+
+$("soundBtn").onclick=()=>{soundOn=!soundOn;$("soundBtn").textContent=soundOn?"♫ Som: ligado":"♫ Som: desligado";tone(580,.1);};
+$("fullBtn").onclick=async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen();}catch(e){toast("Tela cheia não suportada.");}};
+
+document.addEventListener("keydown",e=>{
+ if(e.key==="Escape"){if($("roulette").classList.contains("active"))showChallenge();else if($("game").classList.contains("active")){$("pauseBtn").click();}return;}
+ if(["INPUT","TEXTAREA"].includes(document.activeElement.tagName))return;
+ if(e.key==="ArrowRight"&&$("game").classList.contains("active")){e.preventDefault();$("nextBtn").click();}
+ if(e.key==="ArrowLeft"&&$("game").classList.contains("active")){e.preventDefault();$("skipBtn").click();}
+ if(e.key==="Enter"&&$("home").classList.contains("active")){$("startBtn").click();}
+});
+</script>
+</body>
+</html>
